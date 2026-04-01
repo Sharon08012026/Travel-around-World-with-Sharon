@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>環遊世界趣 Travel Around the World｜長春國小</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', 'PingFang TC', 'Noto Sans TC', sans-serif;
+    background: #f5f5f2;
+    color: #1a1a1a;
+    padding: 2rem 1.5rem 4rem;
+    font-size: 18px;
+  }
+  .page-wrap { max-width: 860px; margin: 0 auto; }
+
+  .header { text-align: center; margin-bottom: 2.5rem; padding: 2rem; background: #fff; border-radius: 20px; border: 1.5px solid #e5e5e0; }
+  .header h1 { font-size: 44px; font-weight: 800; color: #1a1a1a; margin-bottom: 8px; }
+  .header h2 { font-size: 22px; font-weight: 400; color: #16A085; margin-bottom: 14px; letter-spacing: 0.06em; }
+  .header p { font-size: 17px; color: #555; line-height: 1.8; }
+  .school { margin-top: 8px; color: #16A085; font-size: 16px; font-weight: 600; }
+
+  .tag-row { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin: 18px 0 0; }
+  .tag { font-size: 15px; padding: 7px 20px; border-radius: 30px; font-weight: 700; }
+  .tag-listen { background: #E1F5EE; color: #0F6E56; }
+  .tag-sing   { background: #FAECE7; color: #993C1D; }
+  .tag-play   { background: #EEEDFE; color: #3C3489; }
+  .tag-read   { background: #E6F1FB; color: #185FA5; }
+  .tag-dance  { background: #FAEEDA; color: #854F0B; }
+
+  /* 單欄排列 */
+  .grid { display: flex; flex-direction: column; gap: 18px; }
+
+  .card {
+    background: #fff;
+    border: 2px solid #e5e5e0;
+    border-radius: 20px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .card:hover { border-color: #bbb; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+  .card.open  { border-color: #999; }
+
+  .card-header { padding: 26px 30px; display: flex; align-items: center; gap: 20px; }
+  .flag-circle { width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 38px; flex-shrink: 0; }
+  .card-meta { flex: 1; min-width: 0; }
+  .card-num { font-size: 14px; font-weight: 800; letter-spacing: 0.12em; margin-bottom: 5px; }
+  .card-title { font-size: 24px; font-weight: 800; color: #1a1a1a; }
+  .card-country { font-size: 16px; color: #888; margin-top: 4px; }
+  .chevron { font-size: 20px; color: #bbb; transition: transform 0.2s; user-select: none; flex-shrink: 0; }
+  .card.open .chevron { transform: rotate(180deg); }
+
+  .card-body {
+    border-top: 2px solid #f0f0ec;
+    padding: 26px 30px;
+    display: none;
+    background: #fafaf8;
+  }
+  .card.open .card-body { display: block; }
+
+  .section-label {
+    font-size: 13px; font-weight: 800; letter-spacing: 0.12em;
+    color: #bbb; margin-bottom: 12px; margin-top: 22px; text-transform: uppercase;
+  }
+  .section-label:first-child { margin-top: 0; }
+
+  .timeline { display: flex; flex-direction: column; gap: 14px; }
+  .step { display: flex; align-items: flex-start; gap: 14px; }
+  .step-time { font-size: 14px; font-weight: 800; min-width: 56px; padding-top: 3px; flex-shrink: 0; }
+  .step-dot { width: 10px; height: 10px; border-radius: 50%; margin-top: 7px; flex-shrink: 0; }
+  .step-text { font-size: 17px; color: #333; line-height: 1.75; }
+
+  .highlight-box {
+    border-left: 5px solid; padding: 14px 18px;
+    border-radius: 0 12px 12px 0; margin-top: 16px;
+  }
+  .highlight-box p { font-size: 16px; font-style: italic; line-height: 1.8; }
+
+  .vocab-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  .vocab-pill {
+    font-size: 15px; padding: 6px 16px; border-radius: 30px;
+    border: 1.5px solid #e0e0d8; color: #555; background: #fff;
+  }
+  .activity-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+
+  .c1 .card-num { color: #0F6E56; } .c1 .flag-circle { background: #E1F5EE; }
+  .c1 .step-time { color: #0F6E56; } .c1 .step-dot { background: #1D9E75; }
+  .c1 .highlight-box { border-color: #1D9E75; background: #edfaf4; }
+  .c1 .highlight-box p { color: #0F6E56; }
+
+  .c2 .card-num { color: #993C1D; } .c2 .flag-circle { background: #FAECE7; }
+  .c2 .step-time { color: #993C1D; } .c2 .step-dot { background: #D85A30; }
+  .c2 .highlight-box { border-color: #D85A30; background: #fdf2ee; }
+  .c2 .highlight-box p { color: #993C1D; }
+
+  .c3 .card-num { color: #854F0B; } .c3 .flag-circle { background: #FAEEDA; }
+  .c3 .step-time { color: #854F0B; } .c3 .step-dot { background: #BA7517; }
+  .c3 .highlight-box { border-color: #EF9F27; background: #fdf5e6; }
+  .c3 .highlight-box p { color: #854F0B; }
+
+  .c4 .card-num { color: #185FA5; } .c4 .flag-circle { background: #E6F1FB; }
+  .c4 .step-time { color: #185FA5; } .c4 .step-dot { background: #378ADD; }
+  .c4 .highlight-box { border-color: #378ADD; background: #edf5fd; }
+  .c4 .highlight-box p { color: #185FA5; }
+
+  .c5 .card-num { color: #3C3489; } .c5 .flag-circle { background: #EEEDFE; }
+  .c5 .step-time { color: #3C3489; } .c5 .step-dot { background: #7F77DD; }
+  .c5 .highlight-box { border-color: #7F77DD; background: #f3f2fe; }
+  .c5 .highlight-box p { color: #3C3489; }
+
+  .c6 .card-num { color: #3B6D11; } .c6 .flag-circle { background: #EAF3DE; }
+  .c6 .step-time { color: #3B6D11; } .c6 .step-dot { background: #639922; }
+  .c6 .highlight-box { border-color: #639922; background: #f0f8e6; }
+  .c6 .highlight-box p { color: #3B6D11; }
+
+  .footer { text-align: center; margin-top: 3rem; font-size: 15px; color: #ccc; }
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <div class="header">
+    <h1>環遊世界趣</h1>
+    <h2>Travel Around the World</h2>
+    <p>共 6 堂課・每堂 40 分鐘・全英語沉浸式學習</p>
+    <p class="school">臺北市中山區長春國民小學 教務處</p>
+    <div class="tag-row">
+      <span class="tag tag-listen">聆聽 Listening</span>
+      <span class="tag tag-sing">歌唱 Singing</span>
+      <span class="tag tag-play">遊戲 Playing</span>
+      <span class="tag tag-read">閱讀 Reading</span>
+      <span class="tag tag-dance">律動 Dancing</span>
+    </div>
+  </div>
+
+  <div class="grid">
+
+    <div class="card c1" onclick="toggle(this)">
+      <div class="card-header">
+        <div class="flag-circle">🇹🇼</div>
+        <div class="card-meta">
+          <div class="card-num">第一堂</div>
+          <div class="card-title">長春大冒險藏寶圖</div>
+          <div class="card-country">台灣・四平商圈探索</div>
+        </div>
+        <div class="chevron">▼</div>
+      </div>
+      <div class="card-body">
+        <div class="section-label">40 分鐘流程</div>
+        <div class="timeline">
+          <div class="step"><span class="step-time">0–5 分</span><div class="step-dot"></div><span class="step-text">暖身：轉動地球儀，問 "Where are we right now?"——介紹六國旅程，在世界地圖上標出第一站：台灣</span></div>
+          <div class="step"><span class="step-time">5–30 分</span><div class="step-dot"></div><span class="step-text">藏寶圖大挑戰：老師念出英語方向謎題，答對的同學獲得一片四平商圈地圖拼圖，搶先拼完全圖者得大獎</span></div>
+          <div class="step"><span class="step-time">30–37 分</span><div class="step-dot"></div><span class="step-text">最快完成拼圖的組別獲勝！全班一起用英語討論線索，分享最喜歡的附近地點</span></div>
+          <div class="step"><span class="step-time">37–40 分</span><div class="step-dot"></div><span class="step-text">在個人旅行護照本上蓋下「台灣」戳章——這本護照將陪伴孩子走完六堂旅程</span></div>
+        </div>
+        <div class="highlight-box">
+          <p>謎題範例："It's very famous. You make a right turn at McDonald's. Keep going and it's on your right. What is the food store?"</p>
+        </div>
+        <div class="section-label">關鍵詞彙</div>
+        <div class="vocab-row">
+          <span class="vocab-pill">turn left / right</span><span class="vocab-pill">keep going</span><span class="vocab-pill">on your left</span><span class="vocab-pill">famous</span><span class="vocab-pill">neighborhood</span>
+        </div>
+        <div class="section-label">活動類型</div>
+        <div class="activity-tags">
+          <span class="tag tag-listen">聆聽</span><span class="tag tag-play">遊戲</span><span class="tag tag-read">閱讀</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card c2" onclick="toggle(this)">
+      <div class="card-header">
+        <div class="flag-circle">🇯🇵</div>
+        <div class="card-meta">
+          <div class="card-num">第二堂</div>
+          <div class="card-title">你好！日本一日遊</div>
+          <div class="card-country">日本・摺紙與祭典舞蹈</div>
+        </div>
+        <div class="chevron">▼</div>
+      </div>
+      <div class="card-body">
+        <div class="section-label">40 分鐘流程</div>
+        <div class="timeline">
+          <div class="step"><span class="step-time">0–5 分</span><div class="step-dot"></div><span class="step-text">蓋上日本戳章！閃卡快問快答——富士山、壽司、新幹線，你認識哪些日本？</span></div>
+          <div class="step"><span class="step-time">5–18 分</span><div class="step-dot"></div><span class="step-text">摺紙千紙鶴：老師全程用英語下指令——"fold in half""crease""open it up""fold the corners in"，孩子只能靠聆聽完成</span></div>
+          <div class="step"><span class="step-time">18–30 分</span><div class="step-dot"></div><span class="step-text">唱歌時間：以「上を向いて歩こう」旋律填入英語旅行歌詞，每折一步驟就用日語數數 1 到 10</span></div>
+          <div class="step"><span class="step-time">30–40 分</span><div class="step-dot"></div><span class="step-text">盂蘭盆舞律動：圍成圓圈，學 8 拍基本動作——"step right, step left, reach up, pull back, clap clap!"</span></div>
+        </div>
+        <div class="highlight-box">
+          <p>律動口訣："Step and step and reach up high, wave your hands up to the sky, now we clap and turn around — Konnichiwa to everyone!"</p>
+        </div>
+        <div class="section-label">關鍵詞彙</div>
+        <div class="vocab-row">
+          <span class="vocab-pill">fold / crease / unfold</span><span class="vocab-pill">Konnichiwa</span><span class="vocab-pill">日語 1–10</span><span class="vocab-pill">crane / wish</span>
+        </div>
+        <div class="section-label">活動類型</div>
+        <div class="activity-tags">
+          <span class="tag tag-listen">聆聽</span><span class="tag tag-sing">歌唱</span><span class="tag tag-play">遊戲</span><span class="tag tag-dance">律動</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card c3" onclick="toggle(this)">
+      <div class="card-header">
+        <div class="flag-circle">🇲🇽</div>
+        <div class="card-meta">
+          <div class="card-num">第三堂</div>
+          <div class="card-title">芙烈達的繽紛世界</div>
+          <div class="card-country">墨西哥・藝術與自我表達</div>
+        </div>
+        <div class="chevron">▼</div>
+      </div>
+      <div class="card-body">
+        <div class="section-label">40 分鐘流程</div>
+        <div class="timeline">
+          <div class="step"><span class="step-time">0–5 分</span><div class="step-dot"></div><span class="step-text">蓋上墨西哥戳章！播放墨西哥流浪樂隊音樂——「閉上眼睛，這個音樂帶你到哪裡？」</span></div>
+          <div class="step"><span class="step-time">5–13 分</span><div class="step-dot"></div><span class="step-text">故事朗讀：圖畫書風格介紹芙烈達・卡蘿——她的意外、她的日記、為什麼她總是畫自己，以及頭上的花與動物朋友</span></div>
+          <div class="step"><span class="step-time">13–33 分</span><div class="step-dot"></div><span class="step-text">藝術創作：在預先印好的橢圓形畫框上畫出芙烈達風格的自畫像——頭上大朵的花、濃眉、最喜歡的動物夥伴、大膽鮮豔的色彩</span></div>
+          <div class="step"><span class="step-time">33–40 分</span><div class="step-dot"></div><span class="step-text">畫廊漫步：每位同學用一句話介紹自己的作品，其他人靜靜欣賞</span></div>
+        </div>
+        <div class="highlight-box">
+          <p>發表句型："My name is ___ and in my portrait I feel ___ because ___. My special flower is a ___ and my animal friend is a ___."</p>
+        </div>
+        <div class="section-label">關鍵詞彙</div>
+        <div class="vocab-row">
+          <span class="vocab-pill">self-portrait 自畫像</span><span class="vocab-pill">情緒詞彙</span><span class="vocab-pill">artist / create</span><span class="vocab-pill">bold / colorful</span>
+        </div>
+        <div class="section-label">活動類型</div>
+        <div class="activity-tags">
+          <span class="tag tag-listen">聆聽</span><span class="tag tag-read">閱讀</span><span class="tag tag-play">遊戲</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card c4" onclick="toggle(this)">
+      <div class="card-header">
+        <div class="flag-circle">🇺🇸</div>
+        <div class="card-meta">
+          <div class="card-num">第四堂</div>
+          <div class="card-title">星條旗與牛仔舞！</div>
+          <div class="card-country">美國・地標競賽與 Line Dance</div>
+        </div>
+        <div class="chevron">▼</div>
+      </div>
+      <div class="card-body">
+        <div class="section-label">40 分鐘流程</div>
+        <div class="timeline">
+          <div class="step"><span class="step-time">0–7 分</span><div class="step-dot"></div><span class="step-text">蓋上美國戳章！「地標閃電戰」——放出 6 張照片，各組搶答：自由女神像、大峽谷、好萊塢標誌、金門大橋、白宮、尼加拉瀑布</span></div>
+          <div class="step"><span class="step-time">7–20 分</span><div class="step-dot"></div><span class="step-text">Line Dance 教學：用《Old Town Road》音樂學 8 拍動作——跺腳、拍手、Grapevine（交叉步）、轉圈</span></div>
+          <div class="step"><span class="step-time">20–33 分</span><div class="step-dot"></div><span class="step-text">美式英語餐廳遊戲：角色扮演美式餐廳點餐，使用菜單卡練習英語對話</span></div>
+          <div class="step"><span class="step-time">33–40 分</span><div class="step-dot"></div><span class="step-text">Line Dance 大表演——音樂開，全班一起跳！</span></div>
+        </div>
+        <div class="highlight-box">
+          <p>舞蹈口令："Stomp right! Stomp left! Clap clap clap! Grapevine right... grapevine left... turn it all the way around — yeehaw!"</p>
+        </div>
+        <div class="section-label">關鍵詞彙</div>
+        <div class="vocab-row">
+          <span class="vocab-pill">landmarks 地標</span><span class="vocab-pill">May I have...</span><span class="vocab-pill">I'd like...</span><span class="vocab-pill">stomp / clap / grapevine</span>
+        </div>
+        <div class="section-label">活動類型</div>
+        <div class="activity-tags">
+          <span class="tag tag-listen">聆聽</span><span class="tag tag-sing">歌唱</span><span class="tag tag-play">遊戲</span><span class="tag tag-dance">律動</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card c5" onclick="toggle(this)">
+      <div class="card-header">
+        <div class="flag-circle">🇮🇳</div>
+        <div class="card-meta">
+          <div class="card-num">第五堂</div>
+          <div class="card-title">不可思議的印度！</div>
+          <div class="card-country">印度・曼陀羅藝術與寶萊塢</div>
+        </div>
+        <div class="chevron">▼</div>
+      </div>
+      <div class="card-body">
+        <div class="section-label">40 分鐘流程</div>
+        <div class="timeline">
+          <div class="step"><span class="step-time">0–5 分</span><div class="step-dot"></div><span class="step-text">蓋上印度戳章！感官暖身——展示香料（薑黃黃、辣椒紅、孜然棕），請孩子猜顏色與氣味</span></div>
+          <div class="step"><span class="step-time">5–20 分</span><div class="step-dot"></div><span class="step-text">蘭果麗藝術創作：在黑色圓形卡紙上用粉筆或彩色貼點做出對稱幾何圖案，老師用英語實況報導——"Now add a blue diamond in the middle!"</span></div>
+          <div class="step"><span class="step-time">20–35 分</span><div class="step-dot"></div><span class="step-text">寶萊塢舞蹈：學 3 個經典動作——「轉燈泡手」「游泳手」「合掌鞠躬」，串成 16 拍組合</span></div>
+          <div class="step"><span class="step-time">35–40 分</span><div class="step-dot"></div><span class="step-text">合掌圍圈儀式：每位同學合掌說 "My name is ___ and I bring you ___"，感受排燈節溫暖氛圍</span></div>
+        </div>
+        <div class="highlight-box">
+          <p>舞蹈口令："Reach up and screw the bulb! Now swim those arms! Namaste — bring your hands to heart!"</p>
+        </div>
+        <div class="section-label">關鍵詞彙</div>
+        <div class="vocab-row">
+          <span class="vocab-pill">Namaste</span><span class="vocab-pill">mandala / pattern</span><span class="vocab-pill">Diwali 排燈節</span><span class="vocab-pill">spices 香料</span>
+        </div>
+        <div class="section-label">活動類型</div>
+        <div class="activity-tags">
+          <span class="tag tag-listen">聆聽</span><span class="tag tag-play">遊戲</span><span class="tag tag-dance">律動</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card c6" onclick="toggle(this)">
+      <div class="card-header">
+        <div class="flag-circle">🇧🇷</div>
+        <div class="card-meta">
+          <div class="card-num">第六堂</div>
+          <div class="card-title">巴西萬歲！嘉年華！</div>
+          <div class="card-country">巴西・森巴舞與嘉年華面具</div>
+        </div>
+        <div class="chevron">▼</div>
+      </div>
+      <div class="card-body">
+        <div class="section-label">40 分鐘流程</div>
+        <div class="timeline">
+          <div class="step"><span class="step-time">0–5 分</span><div class="step-dot"></div><span class="step-text">蓋上巴西戳章！「巴西快問快答」——足球！亞馬遜！嘉年華！咖啡！孩子們搶著說出所知道的一切</span></div>
+          <div class="step"><span class="step-time">5–18 分</span><div class="step-dot"></div><span class="step-text">嘉年華面具製作：在預裁好的面具底版上貼羽毛、亮片貼紙、用馬克筆彩繪。"Make it as LOUD as carnival!"</span></div>
+          <div class="step"><span class="step-time">18–33 分</span><div class="step-dot"></div><span class="step-text">森巴節奏入門：先用身體打擊樂熱身——拍膝、拍手、跺腳，打出 3 拍節奏，再加上步伐 "quick quick slow"</span></div>
+          <div class="step"><span class="step-time">33–40 分</span><div class="step-dot"></div><span class="step-text">壓軸大遊行：全班戴上自製面具，在教室裡踩著森巴步伐繞行——六堂旅程在歡樂中畫下完美句點！</span></div>
+        </div>
+        <div class="highlight-box">
+          <p>森巴口令："Knees! Clap! Stomp! Quick quick slow — quick quick slow — now samba with your mask on — Viva Brasil!"</p>
+        </div>
+        <div class="section-label">關鍵詞彙</div>
+        <div class="vocab-row">
+          <span class="vocab-pill">carnival / parade</span><span class="vocab-pill">Bom dia / Obrigada</span><span class="vocab-pill">rhythm / beat</span><span class="vocab-pill">quick quick slow</span><span class="vocab-pill">Amazon 亞馬遜</span>
+        </div>
+        <div class="section-label">活動類型</div>
+        <div class="activity-tags">
+          <span class="tag tag-listen">聆聽</span><span class="tag tag-sing">歌唱</span><span class="tag tag-play">遊戲</span><span class="tag tag-dance">律動</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="footer">臺北市中山區長春國民小學 教務處 · 國際教育課程</div>
+</div>
+<script>
+  function toggle(card) {
+    var isOpen = card.classList.contains('open');
+    document.querySelectorAll('.card').forEach(function(c){ c.classList.remove('open'); });
+    if (!isOpen) card.classList.add('open');
+  }
+</script>
+</body>
+</html>
